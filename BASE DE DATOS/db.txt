@@ -1,0 +1,72 @@
+Como nuestra base de datos es un archivo .csv necesitamos importarlo a neo4j para crear la base de
+datos que vamos a trabajar, por lo que lo primero que necesitamos es cargarlo.
+
+Con LOAD CSV cargaremos nuestra base de datos, debemos colocar el archivo en la carpeta de importaciones de NEO4J.
+En mi caso como estoy usando linux estaría en /var/lib/neo4j/import y ahí colocamos el archivo.
+
+Para limpiar la base de datos anterior, podemos usar el siguiente código:
+
+MATCH (n)
+DETACH DELETE n;
+
+Una vez vacía la base de datos, con el siguiente código cargaremos todos los datos:
+
+LOAD CSV WITH HEADERS FROM 'file:///db.csv' AS row
+WITH row LIMIT 1000
+MERGE (j:Jugador {
+
+    nombre: row.long_name,
+    fechaNacimiento: row.dob,
+    altura: toInteger(row.height_cm),
+    nacionalidad: row.nationality,
+    pierna: row.preferred_foot,
+    piernaMala: toInteger(row.weak_foot),
+    general: toInteger(row.overall),
+    potencial: toInteger(row.potential),
+    valor: toInteger(row.value_eur),
+    sueldo: toInteger(row.wage_eur),
+    
+    poteroSalto: toInteger(row.goalkeeping_diving),
+    porteroParada: toInteger(row.goalkeeping_handling),
+    poteroGolpeo: toInteger(row.goalkeeping_kicking),
+    porteroPosicion: toInteger(row.goalkeeping_positioning),
+    porteroReflejos: toInteger(row.goalkeeping_reflexes)})
+WITH j, row
+UNWIND split(row.player_positions, ', ') AS pos
+MERGE (p:Posicion {posicion: pos})
+MERGE (j)-[:JUEGA_COMO]->(p);
+
+Esto nos creará los nodos de Jugador y Posicion, con su relación JUEGA_COMO y añadirá las diferentes
+propiedades a estos.
+
+Con este código uniremos las propiedades de pierna y piernaMala en una sola teniendo las opciones de
+diestro, zurdo o ambidiestro.
+
+MATCH (j:Jugador)
+WHERE j.piernaMala > 3
+SET j.pierna = 'Ambidiestro'
+SET j.piernaMala = null;
+
+
+equipo: row.club_name,
+clausula: toInteger(row.release_clause_eur),
+contrato: toInteger(row.contract_valid_until),
+
+: row.attacking_finishing
+: row.attackinh_heading_accuracy
+: row.attacking_short_passing
+: row.skill_dribbling
+: row.skill_fk_accuracy
+: row.skill_long_passing
+control: toInteger(row.skill_ball_control)
+: row.movement_acceleration
+: row.movement_sprint_speed
+: row.movement_agility
+: row.power_jumping
+: row.power_stamina
+: row.power_long_shots
+: row.mentality_aggression
+: row.mentality_positioning
+: row.mentality_penalties
+: row.mentality_composure
+: row.defending_sliding_tackle

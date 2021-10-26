@@ -1,0 +1,15 @@
+Problema: Las imágenes en la página de inicio no era capaz de ajustarlas a un tamaño común.
+Solución: se ha obtado por colocar una sola imagen fija con un texto dentro.
+
+Problema: Al tener una base de datos de unos 20.000 jugadores con 32 columnas cada uno, mi ordenador no es capaz
+de computar todos estos datos para la creación en cypher de la base de datos.
+Solucion: Se ha obtado ha dividir la base de datos usando sólo los primeros 1.000 jugadores desde el código,
+aun que el archivo siga teniendo 20.000 jugadores, el código los limitara a los 1.000 primeros para poder
+probar los resultados, aun que con 20.000 funcionará de la misma manera.
+
+Problema: Creación de diferentes vistas para los filtros y la muestra de los jugadores que coinciden con los filtros.
+Solución: hacerlo en la misma vista para mayor facilidad de edición de los filtros según la respuesta.
+
+Problema: Cuando se devuelven muchos jugadores las tablas son muy largas.
+Solución: Crear un sistema de paginación, que va dividiendo los jugadores en diferentes páginas para su visualización.
+

@@ -17,6 +17,7 @@ MERGE (j:Jugador {
 
     nombre: row.long_name,
     fechaNacimiento: row.dob,
+    equipo: row.club_name,
     altura: toInteger(row.height_cm),
     nacionalidad: row.nationality,
     pierna: row.preferred_foot,
@@ -25,10 +26,33 @@ MERGE (j:Jugador {
     potencial: toInteger(row.potential),
     valor: toInteger(row.value_eur),
     sueldo: toInteger(row.wage_eur),
+    clausula: toInteger(row.release_clause_eur),
+    contrato: toInteger(row.contract_valid_until),
+
+    agresividad: toInteger(row.mentality_aggression),
+    posicionamiento: toInteger(row.mentality_positioning),
+    penaltis: toInteger(row.mentality_penalties),
+    compostura: toInteger(row.mentality_composure),
+
+    finalizacion: toInteger(row.attacking_finishing),
+    regates: toInteger(row.skill_dribbling),
+    remate: toInteger(row.attacking_heading_accuracy),
+    tiroFalta: toInteger(row.skill_fk_accuracy),
+    pasesCortos: toInteger(row.attacking_short_passing),
+    pasesLargos: toInteger(row.skill_long_passing),
+    control: toInteger(row.skill_ball_control),
+    disparoLejano: toInteger(row.power_long_shots),
+    marcaje: toInteger(row.defending_sliding_tackle),
     
-    poteroSalto: toInteger(row.goalkeeping_diving),
+    aceleracion: toInteger(row.movement_acceleration),
+    velocidad: toInteger(row.movement_sprint_speed),
+    agilidad: toInteger(row.movement_agility),
+    salto: toInteger(row.power_jumping),
+    resistencia: toInteger(row.power_stamina),
+    
+    porteroSalto: toInteger(row.goalkeeping_diving),
     porteroParada: toInteger(row.goalkeeping_handling),
-    poteroGolpeo: toInteger(row.goalkeeping_kicking),
+    porteroGolpeo: toInteger(row.goalkeeping_kicking),
     porteroPosicion: toInteger(row.goalkeeping_positioning),
     porteroReflejos: toInteger(row.goalkeeping_reflexes)})
 WITH j, row
@@ -44,29 +68,13 @@ diestro, zurdo o ambidiestro.
 
 MATCH (j:Jugador)
 WHERE j.piernaMala > 3
-SET j.pierna = 'Ambidiestro'
+SET j.pierna = 'Ambidiestro';
+
+Eliminamos la propiedad 'piernaMala' de todos los nodos de jugadores.
+
+MATCH (j:Jugador)
 SET j.piernaMala = null;
 
+Creamos un usuario para poder probar la aplicación
 
-equipo: row.club_name,
-clausula: toInteger(row.release_clause_eur),
-contrato: toInteger(row.contract_valid_until),
-
-: row.attacking_finishing
-: row.attackinh_heading_accuracy
-: row.attacking_short_passing
-: row.skill_dribbling
-: row.skill_fk_accuracy
-: row.skill_long_passing
-control: toInteger(row.skill_ball_control)
-: row.movement_acceleration
-: row.movement_sprint_speed
-: row.movement_agility
-: row.power_jumping
-: row.power_stamina
-: row.power_long_shots
-: row.mentality_aggression
-: row.mentality_positioning
-: row.mentality_penalties
-: row.mentality_composure
-: row.defending_sliding_tackle
+MERGE (u:Usuario { nombre: 'PepeCortez' });

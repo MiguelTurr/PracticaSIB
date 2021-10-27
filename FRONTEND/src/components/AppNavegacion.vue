@@ -8,9 +8,9 @@
       </b-navbar-nav>
 
       <b-navbar-nav>
-        <b-nav-item to="/">Inicio</b-nav-item>
-        <b-nav-item to="/buscar">Búsqueda de jugadores</b-nav-item>
-        <b-nav-item to="/contacto">Contáctanos</b-nav-item>
+        <b-nav-item to="/"><i class="fas fa-home"></i><br>Inicio</b-nav-item>
+        <b-nav-item to="/buscar"><i class="fas fa-search-dollar"></i><br>Búsqueda de jugadores</b-nav-item>
+        <b-nav-item to="/perfil"><i class="fas fa-address-card"></i><br>Perfil</b-nav-item>
       </b-navbar-nav>
     </b-navbar>
 </template>

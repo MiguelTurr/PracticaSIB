@@ -1,32 +1,7 @@
 APLICACIÓN
 
-Todos jugadores (diferentes filtros mejor habilidad general, mejor disparo, mejor asistencias, etc) , tabla con siguiente 1,2,3,4,5, y anterior, poder cambiar la tabla al jugador con mas sueldo al de menor sueldo.
-
-Recomendacion jugadores, filtros para busqueda
-
 Perfil, informacion del usuario
-Pagina de contactanos para poder enviar un correo al administrador.
-Pagina de inicio, mostrando caracteristicas de la aplicacion
-Si se encuentra api de football player mostrar caracteristicas actuales del jugador
-
 Perfil borrar busquedas anteriores, recomendaciones por defecto del sistema basadas en tus busquedas anteriores, añadir jugadores a favoritos y poder enviartelos por correo al correo que estas registrado en la pagina
-
---------------------------------------------------------------
-
-Si seleccionas como posición portero que te muestre unas caracteristicas para seleccionar y si pones otra posicion otras.
-
---------------------------------------------------------------
-
-
-API FÚTBOL
-INFORMACIÓN DE LOS JUGADORES
-
-https://www.api-football.com/documentation-v3#operation/get-players
-
-------------------------------------------------------------
-
-WEB DE EJEMPLO DONDE MUESTRA ATRIBUTOS DEL JUGADORES
-https://sofifa.com/player/158023/lionel-messi/210002?attr=career
 
 ------------------------------------------------------------
 
@@ -38,13 +13,6 @@ más una puntuación de 4 o 5 en su pierna mala siendo 5 el máximo y 0 el míni
 
 Se ha decidido unir la edad y la feha de nacimiento ya que apartir de una se puede obtener la otra
 y se ha usado una función en el backed que según la fecha calcule la edad
-FUNCION PARA OBTENER LA EDAD SEGUN LA FECHA DE fechaNacimiento
-https://es.stackoverflow.com/questions/31373/obtener-la-edad-a-partir-de-la-fecha-de-nacimiento-con-javascript-y-php/31380
-
--------------------------------------------------------------
-
-MANUAL DE AYUDA DE CYPHER
-https://neo4j.com/docs/cypher-manual/current/
 
 -------------------------------------------------------------
 
@@ -76,3 +44,26 @@ Eliminación de columnas que se ha considerado que no tenían ningún valor para
 	- Entre otros
 
 -------------------------------------------------------------
+
+Memoria, powerpint y presentacion en video
+
+--------------------------------------------------------------
+
+Mejoras futuras añadir api de futbol para obtener estadísticas actuales de los jugadores.
+Mejoras añadir banderas, escudos de equipos y fotos de perfil de los jugadores.
+
+--------------------------------------------------------------
+
+Recursos para bootstrap y vue
+https://bootstrap-vue.org
+
+--------------------------------------------------------------
+
+PRUEBAS NEO4J
+
+match (u:Usuario {nombre: 'PepeCortez'})-[v:VISITA_PERFIL]->(j:Jugador) return u.nombre, j.nombre, v.veces;
+
+match (u:Usuario {nombre: 'PepeCortez'})-[:LIKES]->(j:Jugador) return u.nombre, j.nombre;
+
+
+

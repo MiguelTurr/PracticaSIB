@@ -1,4 +1,3 @@
-
 // FUNCIÓN QUE CALCULA LA EDAD SEGÚN LA FECHA DE NACIMIENTO
 function calcularEdad(fechaNacimiento) {
 
@@ -14,12 +13,21 @@ function calcularEdad(fechaNacimiento) {
     return edad;
 }
 
+// FUNCIÓN QUE DEVUELVE EL 1 DE ENERO DEL AÑO SEGÚN LA EDAD QUE SE HAYA INTRODUCIDO
 function calcularYearNacimiento(edad) {
+    var hoy = new Date();
+    var year = hoy.getFullYear() - edad;
+    return `${year}-01-01`;
+}
 
+// FUNCIÓN QUE DEVUELVE EL NÚMERO CON SEPARACIÓN ENTRE LOS MILES
+function numeroConSeparador(numero) {
+    return new Intl.NumberFormat("de-DE").format(numero);
 }
 
 // EXPORTAMOS LAS FUNCIONES PARA PODER USARLAS EN OTRO ARCHIVO
 module.exports = {
     calcularEdad,
-    calcularYearNacimiento
+    calcularYearNacimiento,
+    numeroConSeparador
 }

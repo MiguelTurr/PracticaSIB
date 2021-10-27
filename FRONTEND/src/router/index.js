@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Buscar from '../views/Buscar.vue'
-import Contacto from '../views/Contacto.vue'
+import Perfil from '../views/Perfil.vue'
 
 Vue.use(VueRouter)
 
@@ -18,9 +18,9 @@ const routes = [
     component: Buscar
   },
   {
-    path: '/contacto',
-    name: 'Contacto',
-    component: Contacto
+    path: '/perfil',
+    name: 'Perfil',
+    component: Perfil
   }
 ]
 

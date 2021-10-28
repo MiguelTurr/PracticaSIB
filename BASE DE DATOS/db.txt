@@ -20,6 +20,7 @@ MERGE (j:Jugador {
     equipo: row.club_name,
     altura: toInteger(row.height_cm),
     nacionalidad: row.nationality,
+    posiciones: row.player_positions,
     pierna: row.preferred_foot,
     piernaMala: toInteger(row.weak_foot),
     general: toInteger(row.overall),

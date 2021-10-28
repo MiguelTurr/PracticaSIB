@@ -51,11 +51,14 @@ Memoria, powerpint y presentacion en video
 
 Mejoras futuras añadir api de futbol para obtener estadísticas actuales de los jugadores.
 Mejoras añadir banderas, escudos de equipos y fotos de perfil de los jugadores.
+Añadir más características para que los algoritmos recomendadores sean mejores.
 
 --------------------------------------------------------------
 
-Recursos para bootstrap y vue
-https://bootstrap-vue.org
+Como instalar librerias en NEO4J
+
+
+Instalación descargamos la libreria y luego añadimos el .jar a /var/lib/neo4j/plugins
 
 --------------------------------------------------------------
 
@@ -64,6 +67,8 @@ PRUEBAS NEO4J
 match (u:Usuario {nombre: 'PepeCortez'})-[v:VISITA_PERFIL]->(j:Jugador) return u.nombre, j.nombre, v.veces;
 
 match (u:Usuario {nombre: 'PepeCortez'})-[:LIKES]->(j:Jugador) return u.nombre, j.nombre;
+
+
 
 
 

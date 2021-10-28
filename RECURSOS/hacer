@@ -1,4 +1,21 @@
 LOGIN Y REGISTRO
-MOSTRAR FAVORITOS PERFIL
-TERMINAR TODOS LOS FILTROS DE LA BUSQUEDA
 ALGORITMOS DE RECOMENDACION
+
+https://bootstrap-vue.org/docs/components/modal
+
+
+Nodo caracteristicas:
+
+Experimentado (jugador mayor a x edad)
+Joven promesa ()
+Polivalente (juega muchas posiciones)
+mucha agresividad (agresivo)
+poca agresividad (jugador calmado)
+alto con buen remate de cabeza (buen rematador)
+regates alto (playmaker)
+alto tiros libres (buen tirador de falta)
+alto penaltis (buen tirador de penaltis)
+mucho tiempo en un equipo (jugador de equipo)
+juega con las dos piernas (ambidiestro)
+mucho marcaje (defensivo)
+

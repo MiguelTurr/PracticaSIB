@@ -96,9 +96,6 @@ app.post('/buscarJugador', (req, res) => {
     // SUELDO
     query += ' AND j.sueldo <= '+sueldo+' ';
 
-    //
-    //query += ' AND j.control >= '+controlBalon;
-
     // PORTERO
     query += ' AND j.porteroSalto >= ' +porteroSalto;
     query += ' AND j.porteroParada >= ' +porteroParada;
@@ -175,7 +172,6 @@ app.post('/buscarJugador', (req, res) => {
     })
     .catch(error => {
         console.log(error);
-        neo4j.close();
     });
 });
 
@@ -218,7 +214,6 @@ app.post('/recomendarJugadores', (req, res) => {
     })
     .catch(error => {
         console.log(error);
-        neo4j.close();
     });
 });
 
@@ -330,19 +325,16 @@ app.post('/infoJugador', (req, res) => {
             for(let i = 0; i < posLen; i++) {
                 jugador.posiciones[i] = results.records[i]._fields[1].properties.posicion;
             }
-            console.log(jugador);
 
             // ENVIAMOS LA INFORMACIÓN
             res.json(jugador);
         })
         .catch(error => {
             console.log(error);
-            neo4j.close();
         });
     })
     .catch(error => {
         console.log(error);
-        neo4j.close();
     });;
 });
 
@@ -375,7 +367,6 @@ app.post('/borrarBusquedas', (req, res) => {
     })
     .catch(error => {
         console.log(error);
-        neo4j.close();
     });
 });
 
@@ -403,7 +394,54 @@ app.post('/addFavorito', (req, res) => {
     })
     .catch(error => {
         console.log(error);
-        neo4j.close();
+    });
+});
+
+// DIRECCIÓN PARA VER TUS JUGADORES FAVORITOS
+app.post('/verFavorito', (req, res) => {
+
+    // OBTENEMOS LOS VALORES DE LA PETICIÓN
+    var usuario = req.body.usuario;
+
+    // BUSCAMOS EL USUARIO
+    var query = 'MATCH (u:Usuario { nombre: \''+usuario+'\' })-[:LIKES]->(j:Jugador) ';
+
+    query += 'RETURN j.nombre, j.equipo, j.nacionalidad, j.posiciones;'
+
+    // PROCESAMOS LA PETICIÓN
+    neo4j.run(query)
+
+    .then(results => {
+  
+        // ARRAY QUE VAMOS A DEVOLVER CON LOS JUGADORES OBTENIDOS
+        var jugadores = [];
+
+        // SI NO HAY NINGUNA COINCIDENCIA LO DEVUELVE VACIO
+        if(results.records.length == 0) {
+            res.json(jugadores);
+            return;
+        }
+
+        // SI HAY ALGUNA COINCIDENCIA VA RELENANDO EL ARRAY CON LOS DATOS QUE QUEREMOS MOSTRAR
+        results.records.forEach(function(record) { 
+
+            var jugador = {
+
+                // CARACTERÍSTICAS GENERALES DE LOS JUGADORES
+
+                nombre: record._fields[0],
+                posiciones: record._fields[3],
+                equipo: record._fields[1],
+                nacionalidad: record._fields[2],
+            };
+            jugadores.push(jugador);
+        });
+
+        // DEVUELVE EL ARRAY PARA MOSTRARLO
+        res.json(jugadores);      
+    })
+    .catch(error => {
+        console.log(error);
     });
 });
 

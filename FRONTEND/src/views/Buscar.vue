@@ -53,7 +53,7 @@
               <br>
               Potencial: {{this.jugadorPerfil.potencial}} / 100
               <br>
-              <span style="color:yellow;"><i class="fas fa-star"></i> {{this.jugadorPerfil.recomendacion}}</span>
+              <span style="color:yellow;"><i v-show="this.jugadorPerfil.recomendacion != ''" class="fas fa-star"></i> {{this.jugadorPerfil.recomendacion}}</span>
             </td>
             <td>
               <h3>Mentalidad</h3>
@@ -328,8 +328,6 @@
             </tr>
           </thead>
 
-          <br>  
-
           <!-- ATRIBUTOS MENTALES -->
 
           <tbody>
@@ -369,9 +367,205 @@
                 </b-form-group>
               </td>
             </tr>
+
+            <tr>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Mide la precisión de los tiros de penal."></i> Penaltis:
+                <b-form-group id="input-group-15" label-for="input-15">
+                  <b-form-select
+                    id="input-15"
+                    v-model="form.penaltis"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+            </tr>
           </tbody> 
 
+          <br>  
+
+          <!-- ATRIBUTOS FÍSICOS -->
+
+          <tbody>
+            <tr>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Capacidad del jugador de llegar a su velocidad máxima."></i> Acceleración:
+                <b-form-group id="input-group-16" label-for="input-16">
+                  <b-form-select
+                    id="input-16"
+                    v-model="form.aceleracion"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Mide que tan rápido puede correr el jugador."></i> Velocidad:
+                <b-form-group id="input-group-17" label-for="input-17">
+                  <b-form-select
+                    id="input-17"
+                    v-model="form.velocidad"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Mide la facilidad del jugador de moverse o girarse."></i> Agilidad:
+                <b-form-group id="input-group-18" label-for="input-18">
+                  <b-form-select
+                    id="input-18"
+                    v-model="form.agilidad"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+            </tr>
+            
+            <tr>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Habilidad del jugador de saltar del jugador, cuanto mayor sea más alto podrá llegar."></i> Salto:
+                <b-form-group id="input-group-18" label-for="input-18">
+                  <b-form-select
+                    id="input-18"
+                    v-model="form.salto"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Rapidez con la que el jugador durante el partido."></i> Resistencia:
+                <b-form-group id="input-group-19" label-for="input-19">
+                  <b-form-select
+                    id="input-19"
+                    v-model="form.resistencia"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+            </tr>
+          </tbody>
+
+          <br>
+
+          <!-- ATRIBUTOS TÉCNICOS-->
+
+          <tbody>
+            <tr>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Precisión de los disparos con el pie, dentro del área grande."></i> Finalización:
+                <b-form-group id="input-group-20" label-for="input-20">
+                  <b-form-select
+                    id="input-20"
+                    v-model="form.finalizacion"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Habilidad del jugador para llevar la pelota y regatear a un oponente."></i> Regates:
+                <b-form-group id="input-group-21" label-for="input-21">
+                  <b-form-select
+                    id="input-21"
+                    v-model="form.regates"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Mide la capacidad de un jugador de remates con la cabeza."></i> Remate de cabeza:
+                <b-form-group id="input-group-22" label-for="input-22">
+                  <b-form-select
+                    id="input-22"
+                    v-model="form.remate"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Mide la precisión de un tiro libre directo a puerta."></i> Tiro de falta:
+                <b-form-group id="input-group-23" label-for="input-23">
+                  <b-form-select
+                    id="input-23"
+                    v-model="form.tiroFalta"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Determina la precisión de un jugador para pasar el balón a una corta distancia."></i> Pases cortos:
+                <b-form-group id="input-group-24" label-for="input-24">
+                  <b-form-select
+                    id="input-24"
+                    v-model="form.pasesCortos"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Clasifica la precisión de un jugador que realize un pase largo a su compañero de equipo."></i> Pases largos:
+                <b-form-group id="input-group-25" label-for="input-25">
+                  <b-form-select
+                    id="input-25"
+                    v-model="form.pasesLargos"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Capacidad de un jugador de controlar el balón cuando lo recibe."></i> Control de balón:
+                <b-form-group id="input-group-26" label-for="input-26">
+                  <b-form-select
+                    id="input-26"
+                    v-model="form.control"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Mide la precisión de los disparos desde fuera del área."></i> Disparo lejano:
+                <b-form-group id="input-group-27" label-for="input-27">
+                  <b-form-select
+                    id="input-27"
+                    v-model="form.disparoLejano"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+              <td>
+                <i class="fas fa-info-circle" v-b-tooltip.hover title="Capacidad de cubrir a un jugador contrario."></i> Marcaje:
+                <b-form-group id="input-group-28" label-for="input-28">
+                  <b-form-select
+                    id="input-28"
+                    v-model="form.marcaje"
+                    :options="valoresBusqueda"
+                    required
+                  ></b-form-select>
+                </b-form-group>
+              </td>
+            </tr>
+          </tbody>
+
+          <br>
+
           <!-- ATRIBUTOS DE PORTERO-->
+
           <tbody v-if="form.posicion === 'GK'">
 
             <tr>
@@ -507,8 +701,6 @@
         id="tabla-resultados" 
         :per-page="perPage"
         :current-page="currentPage"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
         sort-icon-left
         @row-clicked="verInfoJugador"
         ></b-table>
@@ -576,9 +768,6 @@
         },
 
         // PARA FILTRAR EN LA TABLA
-
-        sortBy: 'edad',
-        sortDesc: false,
 
         fields: [
           { key: 'nombre', sortable: true },
@@ -866,8 +1055,8 @@
 
         valoresBusqueda: [
           { text: 'Sin definir', value: '0'},
-          { text: 'Bajo, medio o alto', value: '25'},
-          { text: 'Medio o alto', value: '50'},
+          { text: 'Bajo, medio y alto', value: '25'},
+          { text: 'Medio y alto', value: '50'},
           { text: 'Alto', value: '75'}
         ],
         show: true,

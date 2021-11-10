@@ -176,7 +176,7 @@ app.post('/buscarJugador', (req, res) => {
 });
 
 // DIRECCIÓN PARA RECOMENDAR JUGADORES SIMILARES SEGÚN BÚSQUEDAS ANTERIORES
-app.post('/recomendarJugadores', (req, res) => {
+app.post('/recomendarSimilares', (req, res) => {
 
     // OBTENEMOS LOS VALORES DE LA PETICIÓN
 
@@ -208,6 +208,8 @@ app.post('/recomendarJugadores', (req, res) => {
 
         // SI HAY ALGUNA COINCIDENCIA VAMOS A BUSCAR JUGADORES SIMILARES
 
+        
+
         // HACER
 
         res.json(jugadores);
@@ -223,6 +225,7 @@ app.post('/infoJugador', (req, res) => {
     // OBTENEMOS LOS VALORES DE LA PETICIÓN
     var jugador = req.body.nombre;
     var usuario = req.body.usuario;
+    var posicion = req.body.posicion;
 
     // BUSCAMOS EL USUARIO
     var queryVisitaPerfil = 'MATCH (u:Usuario { nombre: \''+usuario+'\' }) ';
@@ -258,7 +261,7 @@ app.post('/infoJugador', (req, res) => {
 
             var recomendar = '';
 
-            if(potencial > habilidad && edad < 25) {
+            if(potencial > habilidad && edad < 23) {
                 recomendar = 'Potencial de futuro';
 
             } else if(edad >= 30) {
@@ -288,7 +291,7 @@ app.post('/infoJugador', (req, res) => {
 
                 // POSICIONES DEL JUGADOR
 
-                posiciones:[],
+                posiciones: [],
 
                 // ATRIBUTOS ESPECÍFICOS
 
@@ -317,7 +320,11 @@ app.post('/infoJugador', (req, res) => {
                 porteroParada: results.records[0]._fields[0].properties.porteroParada, 
                 poteroGolpeo: results.records[0]._fields[0].properties.porteroGolpeo,
                 porteroPosicion: results.records[0]._fields[0].properties.porteroPosicion,
-                porteroReflejos: results.records[0]._fields[0].properties.porteroReflejos
+                porteroReflejos: results.records[0]._fields[0].properties.porteroReflejos,
+
+                // JUGADORES SIMILARES
+
+                recomendados: []
             };
 
             // AÑADIMOS LAS POSICIONES QUE JUEGA
@@ -326,8 +333,44 @@ app.post('/infoJugador', (req, res) => {
                 jugador.posiciones[i] = results.records[i]._fields[1].properties.posicion;
             }
 
-            // ENVIAMOS LA INFORMACIÓN
-            res.json(jugador);
+            // JUGADORES SIMILARES
+
+            var queryRecomendados = 'MATCH (j1:Jugador {nombre: \''+jugador.nombre+'\'})-[:TIENE]->(cuisine1) ';
+
+            queryRecomendados += 'WITH j1, collect(id(cuisine1)) AS j1Cuisine ';
+            queryRecomendados += 'MATCH (j2:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: \''+posicion+'\'}) ';
+
+            queryRecomendados += 'MATCH (j2)-[:TIENE]->(cuisine2) WHERE j1 <> j2 ';
+            queryRecomendados += 'WITH j2, gds.alpha.similarity.jaccard(j1Cuisine, collect(id(cuisine2))) AS similitud ';
+            queryRecomendados += 'RETURN j2 ORDER BY similitud DESC LIMIT 3;';
+
+            // PROCESAMOS PETICIÓN PARA ENVIAR JUGADORES SIMILARES
+            neo4j.run(queryRecomendados)
+
+            .then(results => {
+
+                // GUARDAR INFORMACIÓN DE LOS JUGADORES SIMILARES
+                results.records.forEach(function(record) { 
+
+                    var edadRecomendado = utils.calcularEdad(record._fields[0].properties.fechaNacimiento);
+
+                    var similar = {
+                        nombre: record._fields[0].properties.nombre,
+                        nacionalidad: record._fields[0].properties.nacionalidad,
+                        fechaNacimiento: record._fields[0].properties.fechaNacimiento,
+                        edad: edadRecomendado,
+                        altura: record._fields[0].properties.altura,
+                        posiciones: record._fields[0].properties.posiciones,
+                    };
+                    jugador.recomendados.push(similar);
+                });
+
+                // ENVIAMOS LA INFORMACIÓN
+                res.json(jugador);
+            })
+            .catch(error => {
+                console.log(error);
+            });
         })
         .catch(error => {
             console.log(error);

@@ -71,11 +71,176 @@ MATCH (j:Jugador)
 WHERE j.piernaMala > 3
 SET j.pierna = 'Ambidiestro';
 
-Eliminamos la propiedad 'piernaMala' de todos los nodos de jugadores.
-
-MATCH (j:Jugador)
-SET j.piernaMala = null;
-
 Creamos un usuario para poder probar la aplicación
 
 MERGE (u:Usuario { nombre: 'PepeCortez' });
+
+Añadimos visitas a algunos perfiles para poder probar el sistema de recomendaciones
+
+MATCH (u:Usuario { nombre: 'PepeCortez' })
+MATCH (j:Jugador { nombre: 'Gianluigi Donnarumma' })
+MERGE (u)-[:VISITA_PERFIL {veces: 10}]->(j);
+
+MATCH (u:Usuario { nombre: 'PepeCortez' })
+MATCH (j:Jugador { nombre: 'Erling Haaland' })
+MERGE (u)-[:VISITA_PERFIL {veces: 20}]->(j);
+
+Creamos algunas características para comparar a los jugadores
+
+CREATE
+(:Caracteristica {valor: 'Joven'} ),
+(:Caracteristica {valor: 'Experimentado'} ),
+(:Caracteristica {valor: 'Joven promesa'} ),
+(:Caracteristica {valor: 'Polivalente'} ),
+(:Caracteristica {valor: 'Playmaker' }),
+(:Caracteristica {valor: 'Alto' }),
+(:Caracteristica {valor: 'Bajo' }),
+(:Caracteristica {valor: 'Buen cabeceador' }),
+(:Caracteristica {valor: 'Agresivo'} ),
+(:Caracteristica {valor: 'Calmado'} ),
+(:Caracteristica {valor: 'Buen tirador falta'} ),
+(:Caracteristica {valor: 'Buen tirador penaltis'} ),
+(:Caracteristica {valor: 'Buenos tiros lejanos'} ),
+(:Caracteristica {valor: 'Killer'} ),
+(:Caracteristica {valor: 'Escurridizo'} ),
+(:Caracteristica {valor: 'Acierto en pases'} ),
+(:Caracteristica {valor: 'Diestro'} ),
+(:Caracteristica {valor: 'Zurdo'} ),
+(:Caracteristica {valor: 'Defensivo'} ),
+(:Caracteristica {valor: 'Coste barato'} ),
+(:Caracteristica {valor: 'Coste medio'} ),
+(:Caracteristica {valor: 'Coste alto'} ),
+(:Caracteristica {valor: 'Veloz'} ),
+(:Caracteristica {valor: 'Agil'} ),
+(:Caracteristica {valor: 'Buen aguante fisico'} ),
+(:Caracteristica {valor: 'Buen saque'} ),
+(:Caracteristica {valor: 'Parada aereo'} ),
+(:Caracteristica {valor: 'Buenos reflejos'} ),
+(:Caracteristica {valor: 'Contrato larga duración'} )
+;
+
+Asignamos las características a los jugadores
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE duration.between(date(j.fechaNacimiento), date()).years <= 22 AND c.valor = 'Joven'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE duration.between(date(j.fechaNacimiento), date()).years >= 30 AND c.valor = 'Experimentado'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE duration.between(date(j.fechaNacimiento), date()).years <= 22 AND j.potencial > j.general AND c.valor = 'Joven promesa'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador)-[r:JUEGA_COMO]->(:Posicion), (c:Caracteristica)
+with j, c, count(r) as posiciones
+WHERE posiciones >= 3 AND c.valor = 'Polivalente'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.regates > 85 AND c.valor = 'Playmaker'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.altura > 185 AND c.valor = 'Alto'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.altura <= 165 AND c.valor = 'Bajo'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.altura >= 185 AND j.remate >= 75 AND c.valor = 'Buen cabeceador'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.agresividad >= 75 AND c.valor = 'Agresivo'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.agresividad <= 25 AND c.valor = 'Calmado'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.tiroFalta >= 75 AND c.valor = 'Buen tirador falta'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.penaltis >= 75 AND c.valor = 'Buen tirador penaltis'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.disparoLejano >= 75 AND c.valor = 'Buenos tiros lejanos'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.finalizacion >= 80 AND c.valor = 'Killer'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.velocidad >= 75 AND j.posicionamiento >= 75 AND j.agil >= 75 AND c.valor = 'Escurridizo'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.pasesLargos >= 75 AND j.pasesCortos >= 75 AND c.valor = 'Acierto en pases'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.pierna = 'Ambidiestro' AND (c.valor = 'Diestro' OR c.valor = 'Zurdo')
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.pierna = 'Diestro' AND c.valor = 'Diestro'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.pierna = 'Zurdo' AND c.valor = 'Zurdo'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.marcaje >= 75 AND c.valor = 'Defensivo'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.valor <= 20000000 AND c.valor = 'Coste barato'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.valor > 20000000 AND j.valor < 60000000 AND c.valor = 'Coste medio'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.valor >= 60000000 AND c.valor = 'Coste alto'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.velocidad >= 75 AND c.valor = 'Veloz'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.agilidad >= 75 AND c.valor = 'Agil'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.resistencia >= 80 AND c.valor = 'Buen aguante fisico'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.porteroGolpeo >= 80 AND c.valor = 'Buen saque'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.porteroSalto >= 80 AND c.valor = 'Parada aereo'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WHERE j.porteroReflejos >= 80 AND c.valor = 'Buenos reflejos'
+MERGE (j)-[:TIENE]->(c);
+
+MATCH (j:Jugador), (c:Caracteristica)
+WITH j, c, (2021 - j.contrato) as caducaEn
+WHERE caducaEn >= 4 AND c.valor = 'Contrato larga duración'
+MERGE (j)-[:TIENE]->(c);
+
+

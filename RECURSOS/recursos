@@ -52,6 +52,7 @@ Memoria, powerpint y presentacion en video
 Mejoras futuras añadir api de futbol para obtener estadísticas actuales de los jugadores.
 Mejoras añadir banderas, escudos de equipos y fotos de perfil de los jugadores.
 Añadir más características para que los algoritmos recomendadores sean mejores.
+LOgin y registro.
 
 --------------------------------------------------------------
 
@@ -59,6 +60,17 @@ Como instalar librerias en NEO4J
 
 
 Instalación descargamos la libreria y luego añadimos el .jar a /var/lib/neo4j/plugins
+
+--------------------------------------------------------------
+
+PEARSON
+https://neo4j.com/docs/graph-data-science/current/alpha-algorithms/pearson/
+
+Jaccard Similarity algorithm
+https://neo4j.com/docs/graph-data-science/current/alpha-algorithms/jaccard/
+
+Obtener edad con la fecha de nacimiento en un MATCH en neo4j
+https://community.neo4j.com/t/convert-date-of-birth-property-to-age-during-match/6451/4
 
 --------------------------------------------------------------
 

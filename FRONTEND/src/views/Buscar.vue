@@ -13,11 +13,13 @@
             <td>
                 <b-img :src="image" fluid alt="Jugador"></b-img>
                 <br>
+                <br>
                 {{this.jugadorPerfil.nombre}} ({{this.jugadorPerfil.nacionalidad}})
                 <br>
                 {{this.jugadorPerfil.fechaNacimiento}} ({{this.jugadorPerfil.edad}} años)
                 <br>
                 {{this.jugadorPerfil.altura}} cm
+                <br>
                 <br>
                 <b-button
                 variant="danger"
@@ -223,6 +225,80 @@
                 </b-button>
             </td>
             <td>
+            </td>
+          </tr>
+
+          <br>
+          <br>
+
+          <tr>
+            <td>
+              <h3>Jugadores similares:</h3>
+            </td>
+          </tr>
+
+          <br>
+
+          <tr>
+            <td>
+              <b-img :src="image" fluid alt="Jugador"></b-img>
+              <br>
+              <br>
+              {{this.jugadorPerfil.recomendados[0].nombre}} ({{this.jugadorPerfil.recomendados[0].nacionalidad}})
+              <br>
+              {{this.jugadorPerfil.recomendados[0].posiciones}}
+              <br>
+              {{this.jugadorPerfil.recomendados[0].fechaNacimiento}} ({{this.jugadorPerfil.recomendados[0].edad}} años)
+              <br>
+              {{this.jugadorPerfil.recomendados[0].altura}} cm
+              <br>
+              <br>
+              <b-button
+              variant="danger"
+              v-b-tooltip.hover title="Puedes visitar el perfil de este jugador."
+              v-on:click="verPerfilSimilar(0)">
+              Ver perfil
+              </b-button>
+            </td>
+            <td>
+              <b-img :src="image" fluid alt="Jugador"></b-img>
+              <br>
+              <br>
+              {{this.jugadorPerfil.recomendados[1].nombre}} ({{this.jugadorPerfil.recomendados[1].nacionalidad}})
+              <br>
+              {{this.jugadorPerfil.recomendados[1].posiciones}}
+              <br>
+              {{this.jugadorPerfil.recomendados[1].fechaNacimiento}} ({{this.jugadorPerfil.recomendados[1].edad}} años)
+              <br>
+              {{this.jugadorPerfil.recomendados[1].altura}} cm
+              <br>
+              <br>
+              <b-button
+              variant="danger"
+              v-b-tooltip.hover title="Puedes visitar el perfil de este jugador."
+              v-on:click="verPerfilSimilar(1)">
+              Ver perfil
+              </b-button>
+            </td>
+            <td>
+              <b-img :src="image" fluid alt="Jugador"></b-img>
+              <br>
+              <br>
+              {{this.jugadorPerfil.recomendados[2].nombre}} ({{this.jugadorPerfil.recomendados[2].nacionalidad}})
+              <br>
+              {{this.jugadorPerfil.recomendados[2].posiciones}}
+              <br>
+              {{this.jugadorPerfil.recomendados[2].fechaNacimiento}} ({{this.jugadorPerfil.recomendados[2].edad}} años)
+              <br>
+              {{this.jugadorPerfil.recomendados[2].altura}} cm
+              <br>
+              <br>
+              <b-button
+              variant="danger"
+              v-b-tooltip.hover title="Puedes visitar el perfil de este jugador."
+              v-on:click="verPerfilSimilar(2)">
+              Ver perfil
+              </b-button>
             </td>
           </tr>
 
@@ -657,16 +733,6 @@
 
               <td >
                 <ul class="list-unstyled list-inline">
-
-                  <li class="list-inline-item">
-                    <b-button
-                    variant="success"
-                    v-b-tooltip.hover title="Esta opción te recomendará jugadores similares según la posición seleccionada y tus búsquedas anteriores."
-                    v-on:click="recomendarJugadores">
-                    Recomendar
-                    </b-button>
-                  </li>
-
                   <li class="list-inline-item">
                     <b-button
                     variant="warning"
@@ -1164,7 +1230,7 @@
 
       // RECOMIENDA UN JUGADOR
 
-      async recomendarJugadores() {
+      async recomendarSimilares() {
 
         // ENVIA PETICIÓN
 
@@ -1195,12 +1261,19 @@
 
         // OBTENEMOS EL NOMBRE DEL JUGADOR DE LA TABLA
         var jugadorNombre = item.nombre;
+        var jugadorPosicion = this.form.posicion;
 
         // ENVIA PETICIÓN
 
         const respuesta = await fetch('http://localhost:3000/infoJugador', {
           method: 'POST',
-          body: JSON.stringify({ nombre: jugadorNombre, usuario: 'PepeCortez' }),
+
+          body: JSON.stringify({
+            nombre: jugadorNombre,
+            usuario: 'PepeCortez',
+            posicion: jugadorPosicion
+          }),
+
           headers: {
             'Content-Type': 'application/json'
           },
@@ -1210,6 +1283,8 @@
 
         this.verPerfil = true;
         this.jugadorPerfil = response;
+
+        setTimeout(() => { document.documentElement.scrollTop = 0; }, 200);
       },
 
       // REGRESAR A LA BÚSQUEDA DE JUGADORES
@@ -1217,6 +1292,8 @@
       volverBusqueda() {
         this.verPerfil = false;
         this.jugadorPerfil = [];
+
+        document.documentElement.scrollTop = 0;
       },
 
       //
@@ -1250,6 +1327,38 @@
             centered: true
           });
         }
+      },
+
+      // MOSTRAR EL PERFIL DE UN JUGADOR SIMILAR
+
+      async verPerfilSimilar(id) {
+
+        // OBTENEMOS LA INFORMACIÓN
+        var jugadorNombre = this.jugadorPerfil.recomendados[id].nombre;
+        var jugadorPosicion = this.form.posicion;
+
+        // ENVIA PETICIÓN
+
+        const respuesta = await fetch('http://localhost:3000/infoJugador', {
+          method: 'POST',
+
+          body: JSON.stringify({
+            nombre: jugadorNombre,
+            usuario: 'PepeCortez',
+            posicion: jugadorPosicion
+          }),
+
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        var response = await respuesta.json();
+
+        this.verPerfil = true;
+        this.jugadorPerfil = response;
+
+        document.documentElement.scrollTop = 0;
       }
     }
   }

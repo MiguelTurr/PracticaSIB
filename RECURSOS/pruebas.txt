@@ -1,0 +1,58 @@
+MATCH (u:Usuario)-[v:VISITA_PERFIL]->(j:Jugador) RETURN u.nombre, v.veces, j.nombre;
+
+MATCH (j:Jugador)-[:TIENE]->(c:Caracteristica {valor: 'Alto'}) RETURN j.nombre, j.altura;
+MATCH (j:Jugador)-[:TIENE]->(c:Caracteristica {valor: 'Bajo'}) RETURN j.nombre, j.altura;
+MATCH (j:Jugador)-[:TIENE]->(c:Caracteristica {valor: 'Buen cabeceador'}) RETURN j.nombre, j.altura, j.remate;
+
+MATCH (j:Jugador)-[:TIENE]->(c:Caracteristica {valor: 'Playmaker'}) RETURN j.nombre, j.regates;
+
+
+MATCH (j:Jugador {nombre: 'Gianluigi Donnarumma'})-[:TIENE]->(c:Caracteristica) RETURN c.valor;
+MATCH (j:Jugador {nombre: 'Lionel Andrés Messi Cuccittini'})-[:TIENE]->(c:Caracteristica) RETURN c.valor;
+MATCH (j:Jugador {nombre: 'Sergio Ramos García'})-[:TIENE]->(c:Caracteristica) RETURN c.valor;
+
+MATCH (j:Jugador) return duration.between(date(j.fechaNacimiento),date()).years limit 10;
+
+
+MATCH (j:Jugador) with j, (j.contrato - 2021) as caducaEn where caducaEn >= 5 return j.nombre, caducaEn;
+
+
+MATCH (j:Jugador)-[r:JUEGA_COMO]->(:Posicion), (c:Caracteristica)
+with j, c, count(r) as posiciones
+WHERE posiciones >= 3 AND c.valor = 'Polivalente'
+return j.nombre, posiciones;
+
+
+MATCH (j1:Jugador {nombre: 'Gianluigi Donnarumma'})-[:TIENE]->(cuisine1)
+WITH j1, collect(id(cuisine1)) AS j1Cuisine
+MATCH (j2:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: 'GK'})
+MATCH (j2)-[:TIENE]->(cuisine2) WHERE j1 <> j2
+WITH j1, j1Cuisine, j2, collect(id(cuisine2)) AS j2Cuisine
+RETURN j1.nombre AS from,
+       j2.nombre AS to,
+       gds.alpha.similarity.jaccard(j1Cuisine, j2Cuisine) AS similarity
+ORDER BY similarity DESC limit 20;
+
+MATCH (j1:Jugador {nombre: 'Lionel Andrés Messi Cuccittini'})-[:TIENE]->(cuisine1)
+WITH j1, collect(id(cuisine1)) AS j1Cuisine
+MATCH (j2:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: 'ST'})
+MATCH (j2)-[:TIENE]->(cuisine2) WHERE j1 <> j2
+WITH j1, j1Cuisine, j2, collect(id(cuisine2)) AS j2Cuisine
+RETURN j1.nombre AS from,
+       j2.nombre AS to,
+       gds.alpha.similarity.jaccard(j1Cuisine, j2Cuisine) AS similarity
+ORDER BY similarity DESC limit 20;
+
+
+MATCH (j:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: 'GK'})
+return j.nombre, j.porteroGolpeo, j.porteroParada, j.porteroPosicion, j.porteroReflejos, j.porteroSalto;
+
+
+MATCH (book:Jugador)-[:TIENE]->(genre)
+WITH {item:id(genre), categories: collect(id(book))} AS userData
+WITH collect(userData) AS data
+CALL gds.alpha.similarity.overlap.stream({data: data})
+YIELD item1, item2, count1, count2, intersection, similarity
+RETURN gds.util.asNode(item1).nombre AS from, gds.util.asNode(item2).nombre AS to,
+       count1, count2, intersection, similarity
+ORDER BY similarity DESC limit 10;

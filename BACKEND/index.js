@@ -150,7 +150,7 @@ app.post('/buscarJugador', (req, res) => {
             var jugador = {
 
                 // CARACTERÍSTICAS GENERALES DE LOS JUGADORES
-
+ 
                 nombre: record._fields[0].properties.nombre,
                 edad: utils.calcularEdad(record._fields[0].properties.fechaNacimiento),
                 altura: record._fields[0].properties.altura,
@@ -190,7 +190,7 @@ app.post('/recomendarSimilares', (req, res) => {
     query += 'MATCH (u:Usuario)-[v:VISITA_PERFIL]->(j) WHERE u.nombre = \''+usuario+'\' ';
 
     // ORDENAMOS SEGÚN SE HA VISITADO MÁS VECES
-    query += 'RETURN j ORDER BY v.veces DESC LIMIT 1;'
+    query += 'RETURN j.nombre ORDER BY v.veces DESC LIMIT 1;'
 
     // PROCESAMOS LA PETICIÓN
     neo4j.run(query)
@@ -207,12 +207,59 @@ app.post('/recomendarSimilares', (req, res) => {
         }
 
         // SI HAY ALGUNA COINCIDENCIA VAMOS A BUSCAR JUGADORES SIMILARES
+        var queryRecomendados = 'MATCH (j1:Jugador {nombre: \''+ results.records[0]._fields +'\'}) ';
 
-        
+        queryRecomendados += 'MATCH (j2:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: \''+posicion+'\'}) ';
+        queryRecomendados += 'WHERE j1 <> j2 ';
 
-        // HACER
+        // ATRIBUTOS SEGÚN LA POSICIÓN
+        if(posicion == 'GK') {
 
-        res.json(jugadores);
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([j1.altura, j1.porteroSalto, j1.porteroParada, j1.porteroGolpeo], \
+            [j2.altura, j2.porteroSalto, j2.porteroParada, j2.porteroGolpeo]) AS similitud '
+
+        } else if(posicion == 'ST') {
+
+        }
+
+        queryRecomendados += 'RETURN j2 ';
+        queryRecomendados += 'ORDER BY similitud LIMIT 7;';
+
+        // PROCESAMOS LA PETICIÓN
+        neo4j.run(queryRecomendados)
+    
+        .then(results => {
+
+            // SI HAY ALGUNA COINCIDENCIA VA RELENANDO EL ARRAY CON LOS DATOS QUE QUEREMOS MOSTRAR
+            results.records.forEach(function(record) { 
+
+                var jugador = {
+
+                    // CARACTERÍSTICAS GENERALES DE LOS JUGADORES
+    
+                    nombre: record._fields[0].properties.nombre,
+                    edad: utils.calcularEdad(record._fields[0].properties.fechaNacimiento),
+                    altura: record._fields[0].properties.altura,
+                    pierna: record._fields[0].properties.pierna,
+                    equipo: record._fields[0].properties.equipo,
+                    nacionalidad: record._fields[0].properties.nacionalidad,
+                    valor: utils.numeroConSeparador(record._fields[0].properties.valor) + '€',
+                    sueldo: utils.numeroConSeparador(record._fields[0].properties.sueldo) + '€',
+                    clausula: utils.numeroConSeparador(record._fields[0].properties.clausula) + '€',
+                    contrato: record._fields[0].properties.contrato,
+                    habilidad: record._fields[0].properties.general,
+                    potencial: record._fields[0].properties.potencial
+                };
+                jugadores.push(jugador);
+            });
+
+            // DEVUELVE EL ARRAY PARA MOSTRARLO
+            res.json(jugadores);
+        })
+        .catch(error => {
+            console.log(error);
+        });
     })
     .catch(error => {
         console.log(error);
@@ -335,13 +382,13 @@ app.post('/infoJugador', (req, res) => {
 
             // JUGADORES SIMILARES
 
-            var queryRecomendados = 'MATCH (j1:Jugador {nombre: \''+jugador.nombre+'\'})-[:TIENE]->(cuisine1) ';
+            var queryRecomendados = 'MATCH (j1:Jugador {nombre: \''+jugador.nombre+'\'})-[:TIENE]->(skill1) ';
 
-            queryRecomendados += 'WITH j1, collect(id(cuisine1)) AS j1Cuisine ';
+            queryRecomendados += 'WITH j1, collect(id(skill1)) AS j1Skill ';
             queryRecomendados += 'MATCH (j2:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: \''+posicion+'\'}) ';
 
-            queryRecomendados += 'MATCH (j2)-[:TIENE]->(cuisine2) WHERE j1 <> j2 ';
-            queryRecomendados += 'WITH j2, gds.alpha.similarity.jaccard(j1Cuisine, collect(id(cuisine2))) AS similitud ';
+            queryRecomendados += 'MATCH (j2)-[:TIENE]->(skill2) WHERE j1 <> j2 ';
+            queryRecomendados += 'WITH j2, gds.alpha.similarity.jaccard(j1Skill, collect(id(skill2))) AS similitud ';
             queryRecomendados += 'RETURN j2 ORDER BY similitud DESC LIMIT 3;';
 
             // PROCESAMOS PETICIÓN PARA ENVIAR JUGADORES SIMILARES

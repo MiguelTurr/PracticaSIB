@@ -82,6 +82,18 @@ MATCH (j:Jugador { nombre: 'Gianluigi Donnarumma' })
 MERGE (u)-[:VISITA_PERFIL {veces: 10}]->(j);
 
 MATCH (u:Usuario { nombre: 'PepeCortez' })
+MATCH (j:Jugador { nombre: 'Jérôme Boateng' })
+MERGE (u)-[:VISITA_PERFIL {veces: 20}]->(j);
+
+MATCH (u:Usuario { nombre: 'PepeCortez' })
+MATCH (j:Jugador { nombre: 'Téji Savanier' })
+MERGE (u)-[:VISITA_PERFIL {veces: 20}]->(j);
+
+MATCH (u:Usuario { nombre: 'PepeCortez' })
+MATCH (j:Jugador { nombre: 'Arturo Adolfo Inálcio Dutra' })
+MERGE (u)-[:VISITA_PERFIL {veces: 20}]->(j);
+
+MATCH (u:Usuario { nombre: 'PepeCortez' })
 MATCH (j:Jugador { nombre: 'Erling Haaland' })
 MERGE (u)-[:VISITA_PERFIL {veces: 20}]->(j);
 

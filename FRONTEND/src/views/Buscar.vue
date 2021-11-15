@@ -737,7 +737,7 @@
                     <b-button
                     variant="warning"
                     v-b-tooltip.hover title="Esta opción te recomendará jugadores similares según la posición seleccionada y tus búsquedas anteriores."
-                    v-on:click="recomendarJugadores">
+                    v-on:click="recomendarSimilares">
                     Recomendar
                     </b-button>
                   </li>
@@ -1234,7 +1234,7 @@
 
         // ENVIA PETICIÓN
 
-        const respuesta = await fetch('http://localhost:3000/recomendarJugadores', {
+        const respuesta = await fetch('http://localhost:3000/recomendarSimilares', {
           method: 'POST',
           body: JSON.stringify({ posicion: this.form.posicion, usuario: 'PepeCortez' }),
           headers: {

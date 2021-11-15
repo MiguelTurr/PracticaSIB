@@ -1,9 +1,0 @@
-Problema: Las imágenes en la página de inicio no era capaz de ajustarlas a un tamaño común.
-Solución: se ha obtado por colocar una sola imagen fija con un texto dentro.
-
-Problema: Creación de diferentes vistas para los filtros y la muestra de los jugadores que coinciden con los filtros.
-Solución: hacerlo en la misma vista para mayor facilidad de edición de los filtros según la respuesta.
-
-Problema: Cuando se devuelven muchos jugadores las tablas son muy largas.
-Solución: Crear un sistema de paginación, que va dividiendo los jugadores en diferentes páginas para su visualización.
-

@@ -210,17 +210,58 @@ app.post('/recomendarSimilares', (req, res) => {
         var queryRecomendados = 'MATCH (j1:Jugador {nombre: \''+ results.records[0]._fields +'\'}) ';
 
         queryRecomendados += 'MATCH (j2:Jugador)-[:JUEGA_COMO]->(:Posicion { posicion: \''+posicion+'\'}) ';
-        queryRecomendados += 'WHERE j1 <> j2 ';
+        //queryRecomendados += 'WHERE j1 <> j2 ';
 
         // ATRIBUTOS SEGÚN LA POSICIÓN
-        if(posicion == 'GK') {
-
+        if(posicion == 'GK') { // PORTERO
             queryRecomendados += 'WITH j1, j2, \
-            gds.alpha.similarity.euclideanDistance([j1.altura, j1.porteroSalto, j1.porteroParada, j1.porteroGolpeo], \
-            [j2.altura, j2.porteroSalto, j2.porteroParada, j2.porteroGolpeo]) AS similitud '
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.porteroSalto, j1.porteroParada, j1.porteroGolpeo, j1.porteroPosicion, j1.porteroReflejos, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.porteroSalto, j2.porteroParada, j2.porteroGolpeo, j2.porteroPosicion, j2.porteroReflejos, j2.potencial]) AS similitud '
 
-        } else if(posicion == 'ST') {
+        } else if(posicion == 'CB') { // DEFENSA CENTRAL
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.marcaje, j1.pasesCortos, j1.pasesLargos, j1.agresividad, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.marcaje, j2.pasesCortos, j2.pasesLargos, j2.agresividad, j2.potencial]) AS similitud '
 
+        } else if(posicion == 'RB' || posicion == 'LB') { // LATERAL DERECHO / IZQUIERDO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.marcaje, j1.salto, j1.resistencia, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.marcaje, j2.salto, j2.resistencia, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'RWB' || posicion == 'LWB') { // CARRILERO DERECHO / IZQUIERDO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.resistencia, j1.velocidad, j1.posicionamiento, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.resistencia, j2.velocidad, j2.posicionamiento, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'CDM') { // MEDIO CENTRO DEFENSIVO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.resistencia, j1.velocidad, j1.aceleracion, j1.marcaje, j1.pasesCortos, j1.pasesLargos, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.resistencia, j2.velocidad, j2.aceleracion, j2.marcaje, j2.pasesCortos, j2.pasesLargos, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'CM' || posicion == 'RM' || posicion == 'LM') { // MEDIO CENTRO Y MEDIO DERECHO / IZQUIERDO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.resistencia, j1.pasesCortos, j1.pasesLargos, j1.control, j1.agilidad, j1.compostura, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.resistencia, j2.pasesCortos, j2.pasesLargos, j2.control, j2.agilidad, j1.compostura, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'CAM') { // MEDIO CENTRO OFENSIVO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.resistencia, j1.pasesCortos, j1.control, j1.agilidad, j1.regates, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.resistencia, j2.pasesCortos, j2.control, j2.agilidad, j2.disparoLejano, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'LW' || posicion == 'RW') { // EXTREMO DERECHO / IZQUIERDO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.velocidad, j1.aceleracion, j1.agilidad, j1.regates, j1.tiroFalta, j1.posicionamiento, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.velocidad, j2.aceleracion, j2.agilidad, j2.regates, j2.tiroFalta, j2.posicionamiento, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'CF') { // MEDIA PUNTA
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.resistencia, j1.pasesCortos, j1.control, j1.agilidad, j1.disparoLejano, j1.regates, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.resistencia, j2.pasesCortos, j2.control, j2.agilidad, j2.disparoLejano, j2.regates, j2.potencial]) AS similitud '
+
+        } else if(posicion == 'ST') { // DELANTERO CENTRO
+            queryRecomendados += 'WITH j1, j2, \
+            gds.alpha.similarity.euclideanDistance([duration.between(date(j1.fechaNacimiento), date()).years, j1.altura, j1.velocidad, j1.aceleracion, j1.agilidad, j1.finalizacion, j1.disparoLejano, j1.remate, j1.posicionamiento, j1.potencial], \
+            [duration.between(date(j2.fechaNacimiento), date()).years, j2.altura, j2.velocidad, j2.aceleracion, j2.agilidad, j2.finalizacion, j2.disparoLejano, j2.remate, j1.posicionamiento, j2.potencial]) AS similitud '
         }
 
         queryRecomendados += 'RETURN j2 ';

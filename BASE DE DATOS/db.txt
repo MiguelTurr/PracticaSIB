@@ -13,49 +13,48 @@ Una vez vacía la base de datos, con el siguiente código cargaremos todos los d
 
 LOAD CSV WITH HEADERS FROM 'file:///db.csv' AS row
 WITH row LIMIT 1000
-MERGE (j:Jugador {
+MERGE (j:Jugador {nombre: row.long_name })
+ON CREATE SET
+    j.fechaNacimiento = row.dob,
+    j.equipo = row.club_name,
+    j.altura = toInteger(row.height_cm),
+    j.nacionalidad = row.nationality,
+    j.posiciones = row.player_positions,
+    j.pierna = row.preferred_foot,
+    j.piernaMala = toInteger(row.weak_foot),
+    j.general = toInteger(row.overall),
+    j.potencial = toInteger(row.potential),
+    j.valor = toInteger(row.value_eur),
+    j.sueldo = toInteger(row.wage_eur),
+    j.clausula = toInteger(row.release_clause_eur),
+    j.contrato = toInteger(row.contract_valid_until),
 
-    nombre: row.long_name,
-    fechaNacimiento: row.dob,
-    equipo: row.club_name,
-    altura: toInteger(row.height_cm),
-    nacionalidad: row.nationality,
-    posiciones: row.player_positions,
-    pierna: row.preferred_foot,
-    piernaMala: toInteger(row.weak_foot),
-    general: toInteger(row.overall),
-    potencial: toInteger(row.potential),
-    valor: toInteger(row.value_eur),
-    sueldo: toInteger(row.wage_eur),
-    clausula: toInteger(row.release_clause_eur),
-    contrato: toInteger(row.contract_valid_until),
+    j.agresividad = toInteger(row.mentality_aggression),
+    j.posicionamiento = toInteger(row.mentality_positioning),
+    j.penaltis = toInteger(row.mentality_penalties),
+    j.compostura = toInteger(row.mentality_composure),
 
-    agresividad: toInteger(row.mentality_aggression),
-    posicionamiento: toInteger(row.mentality_positioning),
-    penaltis: toInteger(row.mentality_penalties),
-    compostura: toInteger(row.mentality_composure),
-
-    finalizacion: toInteger(row.attacking_finishing),
-    regates: toInteger(row.skill_dribbling),
-    remate: toInteger(row.attacking_heading_accuracy),
-    tiroFalta: toInteger(row.skill_fk_accuracy),
-    pasesCortos: toInteger(row.attacking_short_passing),
-    pasesLargos: toInteger(row.skill_long_passing),
-    control: toInteger(row.skill_ball_control),
-    disparoLejano: toInteger(row.power_long_shots),
-    marcaje: toInteger(row.defending_sliding_tackle),
+    j.finalizacion = toInteger(row.attacking_finishing),
+    j.regates = toInteger(row.skill_dribbling),
+    j.remate = toInteger(row.attacking_heading_accuracy),
+    j.tiroFalta = toInteger(row.skill_fk_accuracy),
+    j.pasesCortos = toInteger(row.attacking_short_passing),
+    j.pasesLargos = toInteger(row.skill_long_passing),
+    j.control = toInteger(row.skill_ball_control),
+    j.disparoLejano = toInteger(row.power_long_shots),
+    j.marcaje = toInteger(row.defending_sliding_tackle),
     
-    aceleracion: toInteger(row.movement_acceleration),
-    velocidad: toInteger(row.movement_sprint_speed),
-    agilidad: toInteger(row.movement_agility),
-    salto: toInteger(row.power_jumping),
-    resistencia: toInteger(row.power_stamina),
+    j.aceleracion = toInteger(row.movement_acceleration),
+    j.velocidad = toInteger(row.movement_sprint_speed),
+    j.agilidad = toInteger(row.movement_agility),
+    j.salto = toInteger(row.power_jumping),
+    j.resistencia = toInteger(row.power_stamina),
     
-    porteroSalto: toInteger(row.goalkeeping_diving),
-    porteroParada: toInteger(row.goalkeeping_handling),
-    porteroGolpeo: toInteger(row.goalkeeping_kicking),
-    porteroPosicion: toInteger(row.goalkeeping_positioning),
-    porteroReflejos: toInteger(row.goalkeeping_reflexes)})
+    j.porteroSalto = toInteger(row.goalkeeping_diving),
+    j.porteroParada = toInteger(row.goalkeeping_handling),
+    j.porteroGolpeo = toInteger(row.goalkeeping_kicking),
+    j.porteroPosicion = toInteger(row.goalkeeping_positioning),
+    j.porteroReflejos = toInteger(row.goalkeeping_reflexes)
 WITH j, row
 UNWIND split(row.player_positions, ', ') AS pos
 MERGE (p:Posicion {posicion: pos})
@@ -191,7 +190,7 @@ WHERE j.finalizacion >= 80 AND c.valor = 'Killer'
 MERGE (j)-[:TIENE]->(c);
 
 MATCH (j:Jugador), (c:Caracteristica)
-WHERE j.velocidad >= 75 AND j.posicionamiento >= 75 AND j.agil >= 75 AND c.valor = 'Escurridizo'
+WHERE j.velocidad >= 75 AND j.posicionamiento >= 75 AND j.agilidad >= 75 AND c.valor = 'Escurridizo'
 MERGE (j)-[:TIENE]->(c);
 
 MATCH (j:Jugador), (c:Caracteristica)
@@ -251,7 +250,7 @@ WHERE j.porteroReflejos >= 80 AND c.valor = 'Buenos reflejos'
 MERGE (j)-[:TIENE]->(c);
 
 MATCH (j:Jugador), (c:Caracteristica)
-WITH j, c, (2021 - j.contrato) as caducaEn
+WITH j, c, (j.contrato - 2021) as caducaEn
 WHERE caducaEn >= 4 AND c.valor = 'Contrato larga duración'
 MERGE (j)-[:TIENE]->(c);
 

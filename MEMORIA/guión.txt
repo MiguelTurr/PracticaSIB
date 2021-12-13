@@ -1,0 +1,5 @@
+Buenas soy Miguel Turrión Gutiérrez y voy a presentar mi aplicación llamada Football Player Match.
+
+Bueno lo primero que vamos a ver es en qué consiste esta aplicación, pues es una aplicación web que permite la búsqueda de jugadores de fúbol filtrando según lo que queramos buscar y además recomienda jugadores por similitud de dos formas, una cuando estamos ojeando el perfil de alguno de los jugadores y otra basado en búsquedas anteriores.
+
+Las carácteristicas que tiene la aplicación, es que al ser una aplicación web es accesible desde cualquier dispositivo, ya sea móvil u ordenador, también es muy fácil de usar ya que de manera simple se ve lo que hay que hacer y con un par de clicks obtendremos los resultados, tiene una gran cantidad de jugadores de todas las regiones del mundo lo que permite una búsqueda bastante amplia y por último, se tiene almacenada una gran cantidad de información técnica de los jugadores para realizar búsquedas más concisas y con mayor precisión.

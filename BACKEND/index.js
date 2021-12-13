@@ -165,8 +165,8 @@ app.post('/buscarJugador', (req, res) => {
                 potencial: record._fields[0].properties.potencial
             };
             jugadores.push(jugador);
-        });
-
+        })
+        
         // DEVUELVE EL ARRAY PARA MOSTRARLO
         res.json(jugadores);
     })

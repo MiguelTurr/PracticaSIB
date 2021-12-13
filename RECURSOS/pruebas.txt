@@ -1,4 +1,5 @@
-match (u:Usuario {nombre: 'PepeCortez'})-[v:VISITA_PERFIL]->(j:Jugador) return u.nombre, j.nombre, v.veces;
+MATCH (u:Usuario {nombre: 'PepeCortez'})-[v:VISITA_PERFIL]->(j:Jugador)
+RETURN u.nombre, j.nombre, v.veces;
 match (u:Usuario {nombre: 'PepeCortez'})-[:LIKES]->(j:Jugador) return u.nombre, j.nombre;
 
 
@@ -8,16 +9,13 @@ MATCH (j:Jugador)-[:TIENE]->(c:Caracteristica {valor: 'Buen cabeceador'}) RETURN
 
 MATCH (j:Jugador)-[:TIENE]->(c:Caracteristica {valor: 'Playmaker'}) RETURN j.nombre, j.regates;
 
-
 MATCH (j:Jugador {nombre: 'Gianluigi Donnarumma'})-[:TIENE]->(c:Caracteristica) RETURN c.valor;
 MATCH (j:Jugador {nombre: 'Lionel Andrés Messi Cuccittini'})-[:TIENE]->(c:Caracteristica) RETURN c.valor;
 MATCH (j:Jugador {nombre: 'Sergio Ramos García'})-[:TIENE]->(c:Caracteristica) RETURN c.valor;
 
 MATCH (j:Jugador) return duration.between(date(j.fechaNacimiento),date()).years limit 10;
 
-
 MATCH (j:Jugador) with j, (j.contrato - 2021) as caducaEn where caducaEn >= 5 return j.nombre, caducaEn;
-
 
 MATCH (j:Jugador)-[r:JUEGA_COMO]->(:Posicion), (c:Caracteristica)
 with j, c, count(r) as posiciones
@@ -65,3 +63,12 @@ RETURN p1.nombre AS from,
        p2.valor
        order by similarity
        limit 7;
+
+
+LOAD CSV WITH HEADERS FROM 'file:///db.csv' AS row
+WITH row LIMIT 1000
+MATCH (j:Jugador {nombre: row.long_name})
+WITH j, row
+UNWIND split(row.player_positions, ', ') AS pos
+MERGE (p:Posicion {posicion: pos})
+MERGE (j)-[:JUEGA_COMO]->(p);
